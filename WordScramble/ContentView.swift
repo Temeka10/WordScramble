@@ -23,7 +23,6 @@ struct ContentView: View {
                         TextField("Enter your word", text: $newWord)
                             .textInputAutocapitalization(.never)
                     }
-
                     Section {
                         ForEach(usedWords, id: \.self) { word in
                             HStack {
@@ -41,17 +40,18 @@ struct ContentView: View {
                                 .foregroundColor(.red)
                             Text("Number of words: \(numberOfWords)")
                                 .padding(5)
+                                .foregroundColor(.white)
                                 .background(.secondary)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                             Text("Total of letters: \(letterCount)")
                                 .padding(5)
+                                .foregroundColor(.white)
                                 .background(.secondary)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
                         .frame(maxWidth: .infinity)
                             .padding()
                             .font(.headline.monospaced())
-                            .foregroundColor(.black)
                             .background(.ultraThickMaterial)
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                 }
@@ -145,6 +145,10 @@ struct ContentView: View {
         errorTitle = title
         errorMessage = message
         showingError = true
+    }
+    private func createBackGroundView() -> some View {
+        LinearGradient(gradient: Gradient(colors: [.white, .black]), startPoint: .top, endPoint: .bottom)
+            .ignoresSafeArea()
     }
 }
 
