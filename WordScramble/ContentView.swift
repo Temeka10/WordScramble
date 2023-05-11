@@ -134,6 +134,7 @@ struct ContentView: View {
 
         return true
     }
+    
     func isReal(word: String) -> Bool {
         let checker = UITextChecker()
         let range = NSRange(location: 0, length: word.utf16.count)
