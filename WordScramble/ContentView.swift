@@ -16,12 +16,16 @@ struct ContentView: View {
     @State private var showingError = false
     @State private var numberOfWords = 0
     @State private var letterCount = 0
+    init() {
+        UITableView.appearance().backgroundColor = .clear
+    }
     var body: some View {
         NavigationView {
                 List {
                     Section {
                         TextField("Enter your word", text: $newWord)
                             .textInputAutocapitalization(.never)
+                            .foregroundColor(.white)
                     }
                     Section {
                         ForEach(usedWords, id: \.self) { word in
@@ -29,7 +33,10 @@ struct ContentView: View {
                                 Image(systemName: "\(word.count).circle")
                                 Text(word)
                             }
+                            .listRowBackground(Color.clear)
+                            
                         }
+                      
                     }
                         VStack(spacing: 5) {
                             Text("Score")
@@ -37,7 +44,7 @@ struct ContentView: View {
                                 .background(.secondary)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                 .font(.headline.monospaced().bold())
-                                .foregroundColor(.red)
+                                .foregroundColor(.black)
                             Text("Number of words: \(numberOfWords)")
                                 .padding(5)
                                 .foregroundColor(.white)
@@ -49,12 +56,15 @@ struct ContentView: View {
                                 .background(.secondary)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
+                        .listRowBackground(Color.clear)
                         .frame(maxWidth: .infinity)
-                            .padding()
+                        .padding()
                             .font(.headline.monospaced())
-                            .background(.ultraThickMaterial)
+                            .background(.thinMaterial)
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                 }
+                .listStyle(.plain)
+                .background(.linearGradient(colors: [.mint, .blue], startPoint: .top, endPoint: .bottom))
                 .navigationTitle(rootWord)
                 .onSubmit(addNewWord)
                 .onAppear(perform: startGame)
@@ -145,10 +155,6 @@ struct ContentView: View {
         errorTitle = title
         errorMessage = message
         showingError = true
-    }
-    private func createBackGroundView() -> some View {
-        LinearGradient(gradient: Gradient(colors: [.white, .black]), startPoint: .top, endPoint: .bottom)
-            .ignoresSafeArea()
     }
 }
 
