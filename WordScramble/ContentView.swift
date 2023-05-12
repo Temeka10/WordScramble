@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CustomColor {
     static let myColor = Color("Mycolor")
-    // Add more here...
+    static let newcolor = Color("newcolor")
 }
 
 struct ContentView: View {
@@ -26,15 +26,23 @@ struct ContentView: View {
         navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
                     navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
         UITableView.appearance().backgroundColor = .clear
-        UINavigationBar.appearance().barTintColor = .systemBlue
     }
     var body: some View {
         NavigationView {
+            VStack(spacing: 0) {
+                    Text("\(rootWord)")
+                        .frame(width: 500, height: 45)
+                        .font(.system(size: 30).bold())
+                        .foregroundColor(.white)
+                        .background(CustomColor.newcolor)
+                        .clipShape(RoundedRectangle(cornerRadius: 0))
                 List {
                     Section {
                         TextField("Enter your word", text: $newWord)
                             .textInputAutocapitalization(.never)
                     }
+                    .listRowSeparator(.hidden)
+                    
                     Section {
                         ForEach(usedWords, id: \.self) { word in
                             HStack {
@@ -42,38 +50,39 @@ struct ContentView: View {
                                 Text(word)
                             }
                             .listRowBackground(Color.clear)
-                            
+                            .listRowSeparator(.hidden)
                         }
-                      
+                        
                     }
-                        VStack(spacing: 5) {
-                            Text("Score")
-                                .padding(5)
-                                .background(.secondary)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .font(.headline.monospaced().bold())
-                                .foregroundColor(CustomColor.myColor)
-                            Text("Number of words: \(numberOfWords)")
-                                .padding(5)
-                                .foregroundColor(.white)
-                                .background(.secondary)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                            Text("Total of letters: \(letterCount)")
-                                .padding(5)
-                                .foregroundColor(.white)
-                                .background(.secondary)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
-                        .listRowBackground(Color.clear)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                            .font(.headline.monospaced())
-                            .background(.thinMaterial)
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                    VStack(spacing: 5) {
+                        Text("Score")
+                            .padding(5)
+                            .background(.secondary)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .font(.headline.monospaced().bold())
+                            .foregroundColor(CustomColor.myColor)
+                        Text("Number of words: \(numberOfWords)")
+                            .padding(5)
+                            .foregroundColor(.white)
+                            .background(.secondary)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        Text("Total of letters: \(letterCount)")
+                            .padding(5)
+                            .foregroundColor(.white)
+                            .background(.secondary)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .font(.headline.monospaced())
+                    .background(.thinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
                 }
                 .listStyle(.plain)
+            }
                 .background(.linearGradient(colors: [.mint, .blue], startPoint: .top, endPoint: .bottom))
-                .navigationTitle(rootWord)
                 .navigationBarTitleDisplayMode(.inline)
                 .onSubmit(addNewWord)
                 .onAppear(perform: startGame)
@@ -82,8 +91,19 @@ struct ContentView: View {
                 } message: {
                     Text(errorMessage)
                 }
-                .toolbar{
-                    Button("Restart", action: startGame )
+                .toolbar {
+                    ToolbarItem(placement: ToolbarItemPlacement.automatic) {
+                        Button() {
+                            startGame()
+                        } label: {
+                            Image(systemName: "repeat")
+                                .font(.system(size: 20))
+                                .frame(width: 100, height: 37)
+                                .background(.red)
+                                .foregroundColor(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                        }
+                    }
                 }
             }
     }
