@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+struct CustomColor {
+    static let myColor = Color("Mycolor")
+    // Add more here...
+}
+
 struct ContentView: View {
     @State private var usedWords = [String]()
     @State private var rootWord = ""
@@ -17,7 +22,11 @@ struct ContentView: View {
     @State private var numberOfWords = 0
     @State private var letterCount = 0
     init() {
+        let navBarAppearance = UINavigationBar.appearance()
+        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+                    navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
         UITableView.appearance().backgroundColor = .clear
+        UINavigationBar.appearance().barTintColor = .systemBlue
     }
     var body: some View {
         NavigationView {
@@ -25,7 +34,6 @@ struct ContentView: View {
                     Section {
                         TextField("Enter your word", text: $newWord)
                             .textInputAutocapitalization(.never)
-                            .foregroundColor(.white)
                     }
                     Section {
                         ForEach(usedWords, id: \.self) { word in
@@ -44,7 +52,7 @@ struct ContentView: View {
                                 .background(.secondary)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                 .font(.headline.monospaced().bold())
-                                .foregroundColor(.black)
+                                .foregroundColor(CustomColor.myColor)
                             Text("Number of words: \(numberOfWords)")
                                 .padding(5)
                                 .foregroundColor(.white)
@@ -66,6 +74,7 @@ struct ContentView: View {
                 .listStyle(.plain)
                 .background(.linearGradient(colors: [.mint, .blue], startPoint: .top, endPoint: .bottom))
                 .navigationTitle(rootWord)
+                .navigationBarTitleDisplayMode(.inline)
                 .onSubmit(addNewWord)
                 .onAppear(perform: startGame)
                 .alert(errorTitle, isPresented: $showingError) {
