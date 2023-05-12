@@ -13,6 +13,7 @@ struct CustomColor {
 }
 
 struct ContentView: View {
+    @State private var animationAmount = 0.0
     @State private var usedWords = [String]()
     @State private var rootWord = ""
     @State private var newWord = ""
@@ -94,6 +95,9 @@ struct ContentView: View {
                 .toolbar {
                     ToolbarItem(placement: ToolbarItemPlacement.automatic) {
                         Button() {
+                            withAnimation(.interpolatingSpring(stiffness: 7, damping: 4)) {
+                                animationAmount += 360
+                            }
                             startGame()
                         } label: {
                             Image(systemName: "repeat")
@@ -103,6 +107,7 @@ struct ContentView: View {
                                 .foregroundColor(.white)
                                 .clipShape(RoundedRectangle(cornerRadius: 20))
                         }
+                        .rotation3DEffect(.degrees(animationAmount), axis: (x: 0, y: 1, z: 0))
                     }
                 }
             }
@@ -145,7 +150,9 @@ struct ContentView: View {
                 let allWords = startWords.components(separatedBy: "\n")
 
                 // 4. Pick one random word, or use "silkworm" as a sensible default
-                rootWord = allWords.randomElement() ?? "silkworm"
+                withAnimation(.easeInOut(duration: 0.8)) {
+                    rootWord = allWords.randomElement() ?? "silkworm"
+                }
                 usedWords.removeAll()
                 numberOfWords = 0
                 letterCount = 0
