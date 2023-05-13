@@ -10,9 +10,15 @@ import SwiftUI
 struct CustomColor {
     static let myColor = Color("Mycolor")
     static let newcolor = Color("newcolor")
+    static let pink = Color("pink")
+    static let darkpink = Color("darkpink")
+    static let dirtwhite = Color("dirtwhite")
+    static let lightblue = Color("lightblue")
 }
 
 struct ContentView: View {
+    @State private var isEnabled = false
+    @State private var isTapped = false
     @State private var animationAmount = 0.0
     @State private var usedWords = [String]()
     @State private var rootWord = ""
@@ -32,11 +38,14 @@ struct ContentView: View {
         NavigationView {
             VStack(spacing: 0) {
                     Text("\(rootWord)")
-                        .frame(width: 500, height: 45)
-                        .font(.system(size: 30).bold())
-                        .foregroundColor(.white)
-                        .background(CustomColor.newcolor)
-                        .clipShape(RoundedRectangle(cornerRadius: 0))
+                    .animation(.easeIn(duration: 1).delay(0.2))
+                    .frame(maxWidth: isTapped ? 200 : 350, maxHeight: 45)
+                    .animation(.easeInOut(duration: 0.5) .repeatCount(2, autoreverses: true), value: isTapped)
+                    .font(.system(size: 30).bold())
+                    .background(.ultraThinMaterial)
+                    .foregroundColor(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .animation(.easeInOut(duration: 0.5) .repeatCount(2, autoreverses: true), value: isTapped)
                 List {
                     Section {
                         TextField("Enter your word", text: $newWord)
@@ -61,7 +70,7 @@ struct ContentView: View {
                             .background(.secondary)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .font(.headline.monospaced().bold())
-                            .foregroundColor(CustomColor.myColor)
+                            .foregroundColor(.black)
                         Text("Number of words: \(numberOfWords)")
                             .padding(5)
                             .foregroundColor(.white)
@@ -83,7 +92,12 @@ struct ContentView: View {
                 }
                 .listStyle(.plain)
             }
-                .background(.linearGradient(colors: [.mint, .blue], startPoint: .top, endPoint: .bottom))
+            .background(LinearGradient(colors: [.red, .blue], startPoint: isEnabled ? .topLeading : .bottomLeading, endPoint: isEnabled ? .bottomTrailing : .topTrailing)
+                    .ignoresSafeArea())
+                .animation(.linear(duration: 2.0).repeatForever(autoreverses: true), value: isEnabled)
+                .onAppear {
+                    isEnabled = true
+                }
                 .navigationBarTitleDisplayMode(.inline)
                 .onSubmit(addNewWord)
                 .onAppear(perform: startGame)
@@ -99,6 +113,7 @@ struct ContentView: View {
                                 animationAmount += 360
                             }
                             startGame()
+                            isTapped.toggle()
                         } label: {
                             Image(systemName: "repeat")
                                 .font(.system(size: 20))
@@ -148,11 +163,12 @@ struct ContentView: View {
             if let startWords = try? String(contentsOf: startWordsURL) {
                 // 3. Split the string up into an array of strings, splitting on line breaks
                 let allWords = startWords.components(separatedBy: "\n")
-
+                
                 // 4. Pick one random word, or use "silkworm" as a sensible default
-                withAnimation(.easeInOut(duration: 0.8)) {
-                    rootWord = allWords.randomElement() ?? "silkworm"
-                }
+                //                withAnimation(.linear(duration: 1).delay(0.2)) {
+                rootWord = allWords.randomElement() ?? "silkworm"
+//            }
+                
                 usedWords.removeAll()
                 numberOfWords = 0
                 letterCount = 0
