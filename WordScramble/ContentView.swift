@@ -160,9 +160,9 @@ struct ContentView: View {
                 
                 // 4. Pick one random word, or use "silkworm" as a sensible default
                 //                withAnimation(.linear(duration: 1).delay(0.2)) {
-                rootWord = allWords.randomElement() ?? "silkworm"
-//            }
                 
+                    rootWord = allWords.randomElement() ?? "silkworm"
+
                 usedWords.removeAll()
                 numberOfWords = 0
                 letterCount = 0
@@ -217,22 +217,29 @@ struct ContentView_Previews: PreviewProvider {
 struct AnimatableTextView: View {
     @Binding var text: String
     @State private var titleWidth: CGFloat = 250
-    
+    @State private var opacity: Double = 1
     var body: some View {
         Text("\(text)")
-        .animation(.easeIn(duration: 0.5), value: text)
+            .opacity(opacity)
         .frame(maxWidth: titleWidth, maxHeight: 45)
         .font(.system(size: 30).bold())
         .background(.ultraThinMaterial)
         .foregroundColor(.white)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .onChange(of: text) { newValue in
+            withAnimation(.easeIn(duration: 0)) {
+                self.opacity = 0
+            }
+            withAnimation(.easeIn(duration: 0.5).delay(0.5)) {
+                self.opacity = 1
+            }
             withAnimation(.easeInOut(duration: 0.5)) {
                 self.titleWidth = 20
             }
             withAnimation(.easeInOut(duration: 0.5).delay(0.5)) {
                 self.titleWidth = 250
             }
+            
         }
     }
 }
