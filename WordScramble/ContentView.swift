@@ -27,7 +27,6 @@ struct ContentView: View {
     @State private var showingError = false
     @State private var numberOfWords = 0
     @State private var letterCount = 0
-    @State private var titleWidth: CGFloat = 250
     
     init() {
         let navBarAppearance = UINavigationBar.appearance()
@@ -39,22 +38,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                    Text("\(rootWord)")
-                    .animation(.easeIn(duration: 1).delay(0.2))
-                    .frame(maxWidth: titleWidth, maxHeight: 45)
-                    .font(.system(size: 30).bold())
-                    .background(.ultraThinMaterial)
-                    .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .animation(.easeIn(duration: 0.5), value: rootWord)
-                    .onChange(of: rootWord) { newValue in
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            self.titleWidth = 20
-                        }
-                        withAnimation(.easeInOut(duration: 0.5).delay(0.5)) {
-                            self.titleWidth = 250
-                        }
-                    }
+                AnimatableTextView(text: $rootWord)
                 Spacer()
                 List {
                     Section {
@@ -230,3 +214,25 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
+struct AnimatableTextView: View {
+    @Binding var text: String
+    @State private var titleWidth: CGFloat = 250
+    
+    var body: some View {
+        Text("\(text)")
+        .animation(.easeIn(duration: 0.5), value: text)
+        .frame(maxWidth: titleWidth, maxHeight: 45)
+        .font(.system(size: 30).bold())
+        .background(.ultraThinMaterial)
+        .foregroundColor(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .onChange(of: text) { newValue in
+            withAnimation(.easeInOut(duration: 0.5)) {
+                self.titleWidth = 20
+            }
+            withAnimation(.easeInOut(duration: 0.5).delay(0.5)) {
+                self.titleWidth = 250
+            }
+        }
+    }
+}
