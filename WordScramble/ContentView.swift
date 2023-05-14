@@ -18,7 +18,6 @@ struct CustomColor {
 
 struct ContentView: View {
     @State private var isEnabled = false
-    @State private var isTapped = false
     @State private var animationAmount = 0.0
     @State private var usedWords = [String]()
     @State private var rootWord = ""
@@ -28,24 +27,35 @@ struct ContentView: View {
     @State private var showingError = false
     @State private var numberOfWords = 0
     @State private var letterCount = 0
+    @State private var titleWidth: CGFloat = 250
+    
     init() {
         let navBarAppearance = UINavigationBar.appearance()
         navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
                     navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
         UITableView.appearance().backgroundColor = .clear
     }
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
                     Text("\(rootWord)")
                     .animation(.easeIn(duration: 1).delay(0.2))
-                    .frame(maxWidth: isTapped ? 200 : 350, maxHeight: 45)
-                    .animation(.easeInOut(duration: 0.5) .repeatCount(2, autoreverses: true), value: isTapped)
+                    .frame(maxWidth: titleWidth, maxHeight: 45)
                     .font(.system(size: 30).bold())
                     .background(.ultraThinMaterial)
                     .foregroundColor(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .animation(.easeInOut(duration: 0.5) .repeatCount(2, autoreverses: true), value: isTapped)
+                    .animation(.easeIn(duration: 0.5), value: rootWord)
+                    .onChange(of: rootWord) { newValue in
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            self.titleWidth = 20
+                        }
+                        withAnimation(.easeInOut(duration: 0.5).delay(0.5)) {
+                            self.titleWidth = 250
+                        }
+                    }
+                Spacer()
                 List {
                     Section {
                         TextField("Enter your word", text: $newWord)
@@ -113,7 +123,6 @@ struct ContentView: View {
                                 animationAmount += 360
                             }
                             startGame()
-                            isTapped.toggle()
                         } label: {
                             Image(systemName: "repeat")
                                 .font(.system(size: 20))
@@ -156,6 +165,7 @@ struct ContentView: View {
         numberOfWords += 1
         letterCount += answer.count
     }
+    
     func startGame() {
         // 1. Find the URL for start.txt in our app bundle
         if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
@@ -180,9 +190,11 @@ struct ContentView: View {
         // If were are *here* then there was a problem – trigger a crash and report the error
         fatalError("Could not load start.txt from bundle.")
     }
+    
     func isOriginal(word: String) -> Bool {
         !usedWords.contains(word)
     }
+    
     func isPossible(word: String) -> Bool {
         var tempWord = rootWord
 
@@ -196,6 +208,7 @@ struct ContentView: View {
 
         return true
     }
+    
     func isReal(word: String) -> Bool {
         let checker = UITextChecker()
         let range = NSRange(location: 0, length: word.utf16.count)
@@ -203,6 +216,7 @@ struct ContentView: View {
 
         return misspelledRange.location == NSNotFound
     }
+    
     func wordError(title: String, message: String) {
         errorTitle = title
         errorMessage = message
@@ -215,3 +229,4 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
